@@ -6,12 +6,12 @@ import { getAuth } from 'firebase/auth';
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyCoXxQ-5awgmc3CASF1BjI2VoPu215SYZA",
-    authDomain: "jonota-car-services.firebaseapp.com",
-    projectId: "jonota-car-services",
-    storageBucket: "jonota-car-services.appspot.com",
-    messagingSenderId: "455280946374",
-    appId: "1:455280946374:web:5b4e2ca0dfd880b2f27bc7"
+    apiKey: process.env.REACT_APP_apiKey,
+    authDomain: process.env.REACT_APP_authDomain,
+    projectId: process.env.REACT_APP_projectId,
+    storageBucket: process.env.REACT_APP_storageBucket,
+    messagingSenderId: process.env.REACT_APP_messagingSenderId,
+    appId: process.env.REACT_APP_appId,
 };
 
 // Initialize Firebase
