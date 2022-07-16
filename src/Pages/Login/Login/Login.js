@@ -1,9 +1,12 @@
 import React, { useRef } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import { useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
+import { useSendPasswordResetEmail, useSignInWithEmailAndPassword } from 'react-firebase-hooks/auth';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import auth from '../../../firebase.init';
+import Loading from '../../Shared/Loading/Loading';
 import SocialLogin from '../SocialLogin/SocialLogin';
 
 const Login = () => {
@@ -19,7 +22,18 @@ const Login = () => {
         loading,
         error,
     ] = useSignInWithEmailAndPassword(auth);
+    const [sendPasswordResetEmail, sending] = useSendPasswordResetEmail(auth);
 
+    if (loading || sending) {
+        return <Loading></Loading>
+    }
+    let errorMessage;
+    if (error) {
+        errorMessage =
+            <div>
+                <p className='text-danger'>Error: {error?.message}</p>
+            </div>
+    }
     if (user) {
         navigate(from, { replace: true });
     }
@@ -32,6 +46,17 @@ const Login = () => {
 
     const navigateRegister = event => {
         navigate('/register');
+    }
+
+    const resetPass = async () => {
+        const email = emailRef.current.value;
+        if (email) {
+            await sendPasswordResetEmail(email);
+            toast('Email Sent');
+        }
+        else {
+            toast('Please enter your email');
+        }
     }
 
     return (
@@ -50,15 +75,15 @@ const Login = () => {
                     <Form.Label>Password</Form.Label>
                     <Form.Control ref={passRef} type="password" placeholder="Password" required />
                 </Form.Group>
-                <Form.Group className="mb-3" controlId="formBasicCheckbox">
-                    <Form.Check type="checkbox" label="Check me out" />
-                </Form.Group>
-                <Button variant="primary" type="submit">
+                <p onClick={resetPass} style={{ color: 'red', cursor: 'pointer' }}><span>Forget Password?</span></p>
+                <Button variant="primary w-50 d-block mx-auto mb-2" type="submit">
                     Login
                 </Button>
             </Form>
+            {errorMessage}
             <p>New to Jonota Car? <span style={{ cursor: 'pointer' }} className='text-danger' onClick={navigateRegister}>Please Register!!</span> </p>
             <SocialLogin></SocialLogin>
+            <ToastContainer />
         </div>
     );
 };
